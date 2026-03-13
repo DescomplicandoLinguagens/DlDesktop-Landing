@@ -1,0 +1,2137 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DL SAP — Assistente IA para SAP</title>
+    <meta
+      name="description"
+      content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP."
+    />
+    <style>
+      :root {
+        --brand: #007b97;
+        --brand-light: #00a3c4;
+        --brand-dark: #005f75;
+        --bg: #080f17;
+        --bg-card: #0d1724;
+        --bg-card2: #122032;
+        --border: #1e3048;
+        --text: #e2eaf4;
+        --text-muted: #7a99b8;
+        --text-dim: #4a6480;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* ─── NOISE TEXTURE ─── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ─── NAV ─── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 48px;
+        background: rgba(8, 15, 23, 0.8);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0, 123, 151, 0.12);
+        transition: all 0.3s;
+      }
+
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+
+      .nav-logo-icon {
+        width: 36px;
+        height: 36px;
+        background: black;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        box-shadow: 0 0 20px rgba(0, 123, 151, 0.4);
+      }
+
+      .nav-logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.3px;
+      }
+
+      .nav-logo-text span {
+        color: var(--brand-light);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .nav-cta {
+        background: var(--brand);
+        color: #fff !important;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-weight: 600 !important;
+        transition:
+          background 0.2s,
+          transform 0.2s,
+          box-shadow 0.2s !important;
+      }
+
+      .nav-cta:hover {
+        background: var(--brand-light) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 123, 151, 0.4) !important;
+      }
+
+      /* ─── HERO ─── */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 120px 24px 80px;
+        overflow: hidden;
+      }
+
+      /* Glow orbs */
+      .hero::before {
+        content: "";
+        position: absolute;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 123, 151, 0.15) 0%,
+          transparent 70%
+        );
+        top: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 163, 196, 0.08) 0%,
+          transparent 70%
+        );
+        bottom: 0;
+        right: 10%;
+        pointer-events: none;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 123, 151, 0.12);
+        border: 1px solid rgba(0, 123, 151, 0.3);
+        color: var(--brand-light);
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 28px;
+        animation: fadeInDown 0.6s ease both;
+        letter-spacing: 0.3px;
+      }
+
+      .hero-badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--brand-light);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      .hero-title {
+        font-size: clamp(40px, 7vw, 76px);
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -2px;
+        margin-bottom: 24px;
+        animation: fadeInDown 0.6s 0.1s ease both;
+      }
+
+      .hero-title .gradient {
+        background: linear-gradient(
+          135deg,
+          #00c8f0 0%,
+          #007b97 50%,
+          #00e5b0 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: clamp(16px, 2.5vw, 20px);
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto 48px;
+        line-height: 1.7;
+        animation: fadeInDown 0.6s 0.2s ease both;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: center;
+        margin-bottom: 64px;
+        animation: fadeInDown 0.6s 0.3s ease both;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--brand), var(--brand-light));
+        color: #fff;
+        box-shadow: 0 4px 24px rgba(0, 123, 151, 0.35);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(0, 123, 151, 0.5);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(0, 123, 151, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .btn-icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      .os-tag {
+        font-size: 11px;
+        font-weight: 700;
+        opacity: 0.7;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      /* ─── STATS ─── */
+      .hero-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        justify-content: center;
+        animation: fadeInDown 0.6s 0.4s ease both;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--brand-light);
+        letter-spacing: -1px;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: var(--text-dim);
+        margin-top: 2px;
+      }
+
+      /* ─── APP PREVIEW ─── */
+      .app-preview {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 100px;
+        position: relative;
+      }
+
+      .preview-glow {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 800px;
+        height: 100px;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 123, 151, 0.2),
+          transparent
+        );
+        border-radius: 50%;
+        filter: blur(40px);
+        pointer-events: none;
+      }
+
+      .preview-window {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow:
+          0 40px 120px rgba(0, 0, 0, 0.6),
+          0 0 0 1px rgba(0, 123, 151, 0.08);
+        animation: floatUp 0.8s 0.5s ease both;
+      }
+
+      .preview-titlebar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .dot-red {
+        background: #ff5f57;
+      }
+      .dot-yellow {
+        background: #febc2e;
+      }
+      .dot-green {
+        background: #28c840;
+      }
+
+      .preview-titlebar-text {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+
+      /* Fake UI inside preview */
+      .preview-body {
+        display: flex;
+        height: 440px;
+      }
+
+      .preview-sidebar {
+        width: 220px;
+        background: #080f17;
+        border-right: 1px solid var(--border);
+        padding: 16px 0;
+        flex-shrink: 0;
+      }
+
+      .preview-sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 16px 16px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 8px;
+      }
+
+      .preview-sidebar-logo-icon {
+        width: 28px;
+        height: 28px;
+        background: black;
+        border-radius: 6px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .preview-sidebar-logo-text {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 16px;
+        font-size: 13px;
+        color: var(--text-dim);
+        border-radius: 8px;
+        margin: 2px 8px;
+        cursor: default;
+      }
+
+      .nav-item.active {
+        background: rgba(0, 123, 151, 0.15);
+        color: var(--brand-light);
+      }
+
+      .nav-item-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        background: var(--text-dim);
+        opacity: 0.5;
+      }
+      .nav-item.active .nav-item-dot {
+        background: var(--brand-light);
+        opacity: 1;
+      }
+
+      .preview-main {
+        flex: 1;
+        padding: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .chat-messages {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        height: 100%;
+      }
+
+      .msg {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .msg-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .msg-avatar.user {
+        background: rgba(0, 123, 151, 0.3);
+        color: var(--brand-light);
+      }
+      .msg-avatar.ai {
+        background: linear-gradient(135deg, var(--brand), var(--brand-light));
+        color: #fff;
+      }
+
+      .msg-bubble {
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        max-width: 80%;
+      }
+
+      .msg.user {
+        flex-direction: row-reverse;
+      }
+      .msg.user .msg-bubble {
+        background: rgba(0, 123, 151, 0.15);
+        border: 1px solid rgba(0, 123, 151, 0.2);
+        color: var(--text);
+      }
+
+      .msg.ai .msg-bubble {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      .code-block {
+        background: #080f17;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px 10px;
+        margin-top: 6px;
+        font-family: "Fira Code", monospace;
+        font-size: 10px;
+        color: #64d2ff;
+      }
+
+      .preview-input {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+
+      .cursor {
+        animation: blink 1s infinite;
+      }
+
+      /* ─── SECTIONS ─── */
+      section {
+        position: relative;
+        z-index: 1;
+      }
+
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--brand-light);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      .section-title {
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+      }
+
+      .section-desc {
+        color: var(--text-muted);
+        font-size: 17px;
+        line-height: 1.7;
+        max-width: 560px;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ─── FEATURES ─── */
+      .features {
+        padding: 80px 0 100px;
+      }
+
+      .features-header {
+        text-align: center;
+        margin-bottom: 64px;
+      }
+
+      .features-header .section-desc {
+        margin: 0 auto;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      .feature-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px;
+        transition: all 0.3s;
+        cursor: default;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 123, 151, 0.5),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .feature-card:hover {
+        border-color: rgba(0, 123, 151, 0.3);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .feature-card:hover::before {
+        opacity: 1;
+      }
+
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 18px;
+        background: rgba(0, 123, 151, 0.1);
+        border: 1px solid rgba(0, 123, 151, 0.2);
+      }
+
+      .feature-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .feature-desc {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      .feature-tag {
+        display: inline-block;
+        background: rgba(0, 123, 151, 0.1);
+        color: var(--brand-light);
+        border: 1px solid rgba(0, 123, 151, 0.2);
+        padding: 2px 10px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 14px;
+      }
+
+      /* ─── HOW IT WORKS ─── */
+      .how {
+        padding: 80px 0 100px;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(0, 123, 151, 0.03) 50%,
+          transparent 100%
+        );
+      }
+
+      .how-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+      }
+
+      .how-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .step {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        opacity: 0;
+        transform: translateX(-20px);
+        transition: all 0.5s;
+      }
+
+      .step.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .step-number {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--brand), var(--brand-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 0 20px rgba(0, 123, 151, 0.3);
+      }
+
+      .step-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .step-desc {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      .how-visual {
+        position: relative;
+      }
+
+      .chat-demo {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .chat-demo-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .chat-demo-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--brand), var(--brand-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .chat-demo-name {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .chat-demo-status {
+        font-size: 12px;
+        color: #28c840;
+      }
+
+      .demo-msg {
+        margin-bottom: 14px;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .demo-msg.user {
+        text-align: right;
+      }
+
+      .demo-msg .bubble {
+        display: inline-block;
+        padding: 10px 14px;
+        border-radius: 10px;
+        max-width: 85%;
+        text-align: left;
+      }
+
+      .demo-msg.user .bubble {
+        background: rgba(0, 123, 151, 0.15);
+        border: 1px solid rgba(0, 123, 151, 0.2);
+      }
+
+      .demo-msg.ai .bubble {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+      }
+
+      .demo-code {
+        background: #080f17;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: "Fira Code", monospace;
+        font-size: 11px;
+        margin-top: 8px;
+        color: #64d2ff;
+        line-height: 1.7;
+      }
+
+      .keyword {
+        color: #ff79c6;
+      }
+      .string {
+        color: #f1fa8c;
+      }
+      .comment {
+        color: #6272a4;
+      }
+      .func {
+        color: #50fa7b;
+      }
+
+      /* ─── CAPABILITIES TABLE ─── */
+      .tools {
+        padding: 80px 0 100px;
+      }
+
+      .tools-header {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+
+      .tools-header .section-desc {
+        margin: 0 auto;
+      }
+
+      .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .tool-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        transition: all 0.3s;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .tool-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tool-item:hover {
+        border-color: rgba(0, 123, 151, 0.3);
+        background: var(--bg-card2);
+      }
+
+      .tool-emoji {
+        font-size: 20px;
+        line-height: 1;
+        margin-top: 2px;
+      }
+
+      .tool-name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .tool-desc {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      /* ─── SECURITY SECTION ─── */
+      .security {
+        padding: 80px 0 100px;
+      }
+
+      .security-inner {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 64px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .security-inner::before {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 123, 151, 0.08),
+          transparent 70%
+        );
+        top: -100px;
+        right: -100px;
+        pointer-events: none;
+      }
+
+      .security-items {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .security-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .security-check {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(40, 200, 64, 0.15);
+        border: 1px solid rgba(40, 200, 64, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .security-item-title {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .security-item-desc {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      /* ─── DOWNLOAD ─── */
+      .download {
+        padding: 80px 0 100px;
+      }
+
+      .download-inner {
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 123, 151, 0.1),
+          rgba(0, 123, 151, 0.05)
+        );
+        border: 1px solid rgba(0, 123, 151, 0.2);
+        border-radius: 24px;
+        padding: 80px 40px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .download-inner::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 24px;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 123, 151, 0.3),
+          transparent 50%,
+          rgba(0, 163, 196, 0.1)
+        );
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .download-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        max-width: 700px;
+        margin: 40px auto 0;
+      }
+
+      .download-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--text);
+        transition: all 0.3s;
+      }
+
+      .download-card:hover {
+        background: rgba(0, 123, 151, 0.1);
+        border-color: rgba(0, 123, 151, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+      }
+
+      .download-os-icon {
+        font-size: 40px;
+        line-height: 1;
+      }
+
+      .download-os-name {
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .download-ext {
+        font-size: 13px;
+        color: var(--text-dim);
+        font-family: monospace;
+      }
+
+      .download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--brand);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 4px;
+        transition: all 0.2s;
+      }
+
+      .download-card:hover .download-btn {
+        background: var(--brand-light);
+      }
+
+      /* ─── FAQ ─── */
+      .faq {
+        padding: 80px 0 100px;
+      }
+
+      .faq-header {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+
+      .faq-list {
+        max-width: 720px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .faq-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+
+      .faq-item.open {
+        border-color: rgba(0, 123, 151, 0.3);
+      }
+
+      .faq-question {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        gap: 16px;
+        user-select: none;
+      }
+
+      .faq-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        transition: transform 0.3s;
+        opacity: 0.5;
+      }
+
+      .faq-item.open .faq-icon {
+        transform: rotate(45deg);
+        opacity: 1;
+        color: var(--brand-light);
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.3s ease,
+          padding 0.3s;
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+
+      .faq-item.open .faq-answer {
+        max-height: 300px;
+        padding: 0 24px 20px;
+      }
+
+      /* ─── FOOTER ─── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 40px 0;
+      }
+
+      .footer-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .footer-text {
+        font-size: 13px;
+        color: var(--text-dim);
+      }
+
+      .footer-text span {
+        color: var(--brand-light);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 24px;
+      }
+
+      .footer-links a {
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+      }
+
+      .footer-links a:hover {
+        color: var(--text);
+      }
+
+      /* ─── ANIMATIONS ─── */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes floatUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+
+      .float-anim {
+        animation: float 4s ease-in-out infinite;
+      }
+
+      /* ─── DIVIDER ─── */
+      .divider {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--border),
+          transparent
+        );
+        margin: 0 auto;
+        max-width: 800px;
+      }
+
+      /* ─── RESPONSIVE ─── */
+      @media (max-width: 768px) {
+        nav {
+          padding: 14px 20px;
+        }
+        .nav-links {
+          display: none;
+        }
+        .hero {
+          padding: 100px 20px 60px;
+        }
+        .how-inner {
+          grid-template-columns: 1fr;
+          gap: 48px;
+        }
+        .security-inner {
+          grid-template-columns: 1fr;
+          padding: 40px 24px;
+          gap: 40px;
+        }
+        .footer-inner {
+          flex-direction: column;
+          text-align: center;
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ─── NAV ─── -->
+    <nav>
+      <a href="#" class="nav-logo">
+        <img
+          class="nav-logo-icon"
+          src="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100"
+          alt="DL SAP"
+        />
+        <span class="nav-logo-text">DL <span>SAP</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Funcionalidades</a></li>
+        <li><a href="#how">Como funciona</a></li>
+        <li><a href="#seguranca">Segurança</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#download" class="nav-cta">Baixar agora</a></li>
+      </ul>
+    </nav>
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Novo · Agente IA para SAP · Windows &amp; macOS
+      </div>
+
+      <h1 class="hero-title">
+        Seu SAP.<br />
+        <span class="gradient">Com Inteligência Artificial.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Explore objetos ABAP, analise dependências, consulte requests de
+        transporte e converse com um agente que entende o seu SAP — tudo em
+        linguagem natural.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#download" class="btn btn-primary">
+          <img
+                src="https://upload.wikimedia.org/wikipedia/pt/e/e0/Windows_logo.png"
+                style="width: 24px; height: 24px"
+              />
+          Baixar para Windows
+          <span class="os-tag">.exe</span>
+        </a>
+        <a href="#download" class="btn btn-secondary">
+          <img
+                src="https://pngimg.com/d/apple_logo_PNG19673.png"
+                style="width: 20px; height: 24px"
+              />
+          Baixar para macOS
+          <span class="os-tag">.dmg</span>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-number">SAP ADT</div>
+          <div class="stat-label">On-Premise &amp; BTP</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">+15</div>
+          <div class="stat-label">Ferramentas IA</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Dados locais</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">ABAP</div>
+          <div class="stat-label">Nativo no SAP</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── APP PREVIEW ─── -->
+    <div class="app-preview">
+      <div class="preview-glow"></div>
+      <div class="preview-window float-anim">
+        <div class="preview-titlebar">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <div class="preview-titlebar-text">DL SAP — Chat com IA</div>
+        </div>
+        <div class="preview-body">
+          <div class="preview-sidebar">
+            <div class="preview-sidebar-logo">
+              <img
+                class="preview-sidebar-logo-icon"
+                src="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100"
+                alt="DL SAP"
+              />
+              <div class="preview-sidebar-logo-text">DL SAP</div>
+            </div>
+            <div class="nav-item active">
+              <div class="nav-item-dot"></div>
+              Dashboard
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Ambientes SAP
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Pacotes ABAP
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Chat com IA
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Ferramentas
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Dependências
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Requests
+            </div>
+          </div>
+          <div class="preview-main">
+            <div class="chat-messages">
+              <div class="msg user">
+                <div class="msg-avatar user">U</div>
+                <div class="msg-bubble">
+                  Mostre o código-fonte da classe ZCL_MINHA_CLASSE
+                </div>
+              </div>
+              <div class="msg ai">
+                <div class="msg-avatar ai">AI</div>
+                <div class="msg-bubble">
+                  Encontrei a classe <strong>ZCL_MINHA_CLASSE</strong>. Aqui
+                  está o método principal:
+                  <div class="code-block">
+                    <span style="color: #ff79c6">CLASS</span> zcl_minha_classe
+                    <span style="color: #ff79c6">IMPLEMENTATION</span>.<br />
+                    &nbsp;&nbsp;<span style="color: #ff79c6">METHOD</span>
+                    <span style="color: #50fa7b">calcular_imposto</span>.<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6272a4"
+                      >" Cálculo ICMS aplicado</span
+                    ><br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;resultado = base * aliq / 100.<br />
+                    &nbsp;&nbsp;<span style="color: #ff79c6">ENDMETHOD</span
+                    >.<br />
+                    <span style="color: #ff79c6">ENDCLASS</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="msg user">
+                <div class="msg-avatar user">U</div>
+                <div class="msg-bubble">
+                  Quais são as dependências dessa classe?
+                </div>
+              </div>
+            </div>
+            <div class="preview-input">
+              Digite sua pergunta sobre o SAP...<span class="cursor">|</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── FEATURES ─── -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="features-header">
+          <div class="section-label">✦ Funcionalidades</div>
+          <h2 class="section-title">
+            Tudo que você precisa<br />para trabalhar com SAP
+          </h2>
+          <p class="section-desc">
+            Desde explorar objetos ABAP até editar código-fonte, o DLAcademy
+            centraliza tudo em uma única interface inteligente.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card reveal">
+            <div class="feature-icon">💬</div>
+            <div class="feature-title">Chat com IA em linguagem natural</div>
+            <div class="feature-desc">
+              Converse com o agente como se fosse um colega experiente em SAP.
+              Faça perguntas em português e receba respostas diretas com base no
+              seu sistema.
+            </div>
+            <div class="feature-tag">Núcleo do produto</div>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">📦</div>
+            <div class="feature-title">Explorador de Pacotes ABAP</div>
+            <div class="feature-desc">
+              Navegue pela hierarquia de pacotes como em um explorador de
+              arquivos. Expanda, filtre por tipo e acesse o código-fonte de
+              qualquer objeto com um clique.
+            </div>
+            <div class="feature-tag">Busca com wildcards</div>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">🌐</div>
+            <div class="feature-title">SAP On-Premise &amp; BTP Cloud</div>
+            <div class="feature-desc">
+              Suporte nativo a ambientes on-premise via ADT e SAP BTP Cloud
+              ABAP. Cadastre múltiplos sistemas e alterne entre eles a qualquer
+              momento.
+            </div>
+            <div class="feature-tag">Multi-ambiente</div>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">🔗</div>
+            <div class="feature-title">Mapa de Dependências</div>
+            <div class="feature-desc">
+              Analise automaticamente as dependências de qualquer objeto:
+              tabelas, classes, módulos de função, includes, CDS Views e
+              interfaces — visualizados em mapa.
+            </div>
+            <div class="feature-tag">Análise com IA</div>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">📋</div>
+            <div class="feature-title">Geração de Especificações Técnicas</div>
+            <div class="feature-desc">
+              Gere especificações técnicas completas a partir do código-fonte
+              ABAP com auxílio da IA. Documente classes, programas e objetos de
+              forma automática e padronizada.
+            </div>
+            <div class="feature-tag">IA Generativa</div>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">🔌</div>
+            <div class="feature-title">MCPs SAP sempre atualizados</div>
+            <div class="feature-desc">
+              Integração com os Model Context Protocols oficiais do SAP,
+              mantidos e atualizados automaticamente. A IA acessa contexto real
+              e atualizado do seu sistema sem configuração manual.
+            </div>
+            <div class="feature-tag">MCP nativo</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── HOW IT WORKS ─── -->
+    <section class="how" id="how">
+      <div class="container">
+        <div class="how-inner">
+          <div>
+            <div class="section-label">✦ Como funciona</div>
+            <h2 class="section-title">Do download<br />ao primeiro insight</h2>
+            <p class="section-desc" style="margin-bottom: 40px">
+              Em minutos você já está conversando com o seu SAP usando
+              inteligência artificial.
+            </p>
+
+            <div class="how-steps">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                  <div class="step-title">Baixe e instale</div>
+                  <div class="step-desc">
+                    Instale o DLAcademy no seu Windows ou macOS. Processo
+                    simples, sem dependências externas.
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                  <div class="step-title">Insira sua chave de API</div>
+                  <div class="step-desc">
+                    Na tela de login, informe a chave de API fornecida pela DL.
+                    Sessão salva localmente — sem login toda vez.
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                  <div class="step-title">Configure seu ambiente SAP</div>
+                  <div class="step-desc">
+                    Cadastre o IP, mandante e credenciais do seu SAP. Teste a
+                    conexão antes de salvar. Suporte a múltiplos ambientes.
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-number">4</div>
+                <div>
+                  <div class="step-title">Comece a conversar</div>
+                  <div class="step-desc">
+                    Abra o chat e faça sua primeira pergunta. A IA consulta o
+                    SAP em tempo real e responde na hora.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="how-visual">
+            <div class="chat-demo">
+              <div class="chat-demo-header">
+                <div class="chat-demo-avatar">🤖</div>
+                <div>
+                  <div class="chat-demo-name">Agente IA · SAP</div>
+                  <div class="chat-demo-status">● Online — PRD conectado</div>
+                </div>
+              </div>
+
+              <div class="demo-msg user">
+                <div class="bubble">
+                  Liste todos os pacotes que começam com ZFIN
+                </div>
+              </div>
+
+              <div class="demo-msg ai">
+                <div class="bubble">
+                  Encontrei <strong>8 pacotes</strong> com prefixo ZFIN:
+                  <div class="demo-code">
+                    <span class="func">ZFIN_CORE</span> · Pacote principal de
+                    Finanças<br />
+                    <span class="func">ZFIN_AP</span> · Contas a Pagar<br />
+                    <span class="func">ZFIN_AR</span> · Contas a Receber<br />
+                    <span class="func">ZFIN_GL</span> · Contabilidade Geral<br />
+                    <span class="comment">... e mais 4 pacotes</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="demo-msg user">
+                <div class="bubble">
+                  Mostre as classes do ZFIN_AP que começam com ZCL_*
+                </div>
+              </div>
+
+              <div class="demo-msg ai">
+                <div class="bubble">
+                  <strong>12 classes</strong> encontradas em ZFIN_AP:
+                  <div class="demo-code">
+                    <span class="keyword">CLASS</span> ZCL_AP_FORNECEDOR<br />
+                    <span class="keyword">CLASS</span> ZCL_AP_NOTA_FISCAL<br />
+                    <span class="keyword">CLASS</span> ZCL_AP_PAGAMENTO<br />
+                    <span class="comment">... e mais 9 classes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── TOOLS ─── -->
+    <section class="tools" id="tools">
+      <div class="container">
+        <div class="tools-header">
+          <div class="section-label">✦ Ferramentas IA</div>
+          <h2 class="section-title">O que a IA pode fazer<br />no seu SAP</h2>
+          <p class="section-desc">
+            O agente tem acesso a um catálogo completo de ações que executa
+            diretamente no seu sistema SAP, em tempo real.
+          </p>
+        </div>
+
+        <div class="tools-grid">
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">📦</div>
+            <div>
+              <div class="tool-name">Pacotes ABAP</div>
+              <div class="tool-desc">
+                Lista e navega toda a hierarquia de pacotes do seu repositório
+                SAP
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🔍</div>
+            <div>
+              <div class="tool-name">Busca de Objetos</div>
+              <div class="tool-desc">
+                Localiza programas, classes, tabelas e grupos de função por nome
+                com wildcards
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🚛</div>
+            <div>
+              <div class="tool-name">Requests de Transporte</div>
+              <div class="tool-desc">
+                Consulta e lista requests CTS abertas, liberadas e seus objetos
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🏗️</div>
+            <div>
+              <div class="tool-name">Classes ABAP</div>
+              <div class="tool-desc">
+                Lê, edita e ativa código-fonte de classes com lock automático
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">⚙️</div>
+            <div>
+              <div class="tool-name">Grupos de Função</div>
+              <div class="tool-desc">
+                Navega na estrutura completa de grupos de função e seus módulos
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">📄</div>
+            <div>
+              <div class="tool-name">Código-fonte</div>
+              <div class="tool-desc">
+                Lê o código de programas, includes, reports e demais objetos
+                ABAP
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🔗</div>
+            <div>
+              <div class="tool-name">Análise de Dependências</div>
+              <div class="tool-desc">
+                Mapeia todas as dependências de um objeto: tabelas, classes, CDS
+                Views e interfaces
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">☁️</div>
+            <div>
+              <div class="tool-name">SAP BTP Cloud ABAP</div>
+              <div class="tool-desc">
+                Suporte a ambientes BTP via Service Key JSON sem configuração
+                manual
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECURITY ─── -->
+    <section class="security" id="seguranca">
+      <div class="container">
+        <div class="security-inner">
+          <div>
+            <div class="section-label">✦ Segurança &amp; Privacidade</div>
+            <h2 class="section-title">Seus dados SAP<br />ficam com você</h2>
+            <p class="section-desc">
+              O DLAcademy foi projetado com privacidade como prioridade. Seus
+              dados de produção nunca saem da sua máquina.
+            </p>
+          </div>
+
+          <div class="security-items">
+            <div class="security-item">
+              <div class="security-check">✓</div>
+              <div>
+                <div class="security-item-title">
+                  Credenciais armazenadas localmente
+                </div>
+                <div class="security-item-desc">
+                  IP, usuário e senha do SAP ficam criptografados apenas no seu
+                  computador. Nunca são enviados para servidores externos.
+                </div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-check">✓</div>
+              <div>
+                <div class="security-item-title">
+                  Consultas diretas ao seu SAP
+                </div>
+                <div class="security-item-desc">
+                  As chamadas ADT vão diretamente do seu app para o seu SAP.
+                  Nenhum dado de produção passa pelos servidores da DL.
+                </div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-check">✓</div>
+              <div>
+                <div class="security-item-title">
+                  Apenas validação de licença online
+                </div>
+                <div class="security-item-desc">
+                  O único dado que trafega externamente é a validação da sua
+                  chave de API para verificar a licença ativa.
+                </div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-check">✓</div>
+              <div>
+                <div class="security-item-title">Sessão persistente local</div>
+                <div class="security-item-desc">
+                  Sua sessão é salva localmente via armazenamento seguro. Sem
+                  login repetido, sem dados na nuvem.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── DOWNLOAD ─── -->
+    <section class="download" id="download">
+      <div class="container">
+        <div class="download-inner">
+          <div class="section-label" style="justify-content: center">
+            ✦ Download gratuito
+          </div>
+          <h2 class="section-title">
+            Pronto para transformar<br />sua experiência com SAP?
+          </h2>
+          <p
+            style="color: var(--text-muted); font-size: 16px; margin-top: 12px"
+          >
+            Instale em segundos. Compatível com Windows 10+ e macOS 11+.
+          </p>
+
+          <div class="download-grid">
+            <a href="#" class="download-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/pt/e/e0/Windows_logo.png"
+                style="width: 60px; height: 60px"
+              />
+              <div class="download-os-name">Windows</div>
+              <div class="download-ext">instalador .exe · NSIS</div>
+              <div class="download-btn">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/pt/e/e0/Windows_logo.png"
+                  style="width: 24px; height: 24px"
+                />
+                Baixar para Windows
+              </div>
+            </a>
+
+            <a href="#" class="download-card">
+              <img
+                src="https://pngimg.com/d/apple_logo_PNG19673.png"
+                style="width: 50px; height: 60px"
+              />
+              <div class="download-os-name">macOS</div>
+              <div class="download-ext">imagem .dmg · Universal</div>
+              <div class="download-btn">
+                <img
+                src="https://pngimg.com/d/apple_logo_PNG19673.png"
+                style="width: 20px; height: 24px"
+              />
+                </svg>
+                Baixar para macOS
+              </div>
+            </a>
+          </div>
+
+          <p style="color: var(--text-dim); font-size: 13px; margin-top: 28px">
+            Necessário chave de API DL para ativar ·
+            <a
+              href="#faq"
+              style="color: var(--brand-light); text-decoration: none"
+              >Dúvidas? Veja o FAQ</a
+            >
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FAQ ─── -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="faq-header">
+          <div class="section-label">✦ Perguntas frequentes</div>
+          <h2 class="section-title">Tirou as dúvidas?</h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              O que é a chave de API e como eu obtenho?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              A chave de API é fornecida pela Descomplicando Linguagens após a
+              contratação da licença. Ela é usada apenas para validar que você
+              tem acesso ativo à ferramenta. Entre em contato com o suporte da
+              DL para solicitar a sua.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Meus dados do SAP ficam nos servidores da DL?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              Não. As credenciais SAP são armazenadas localmente no seu
+              computador e as consultas são feitas diretamente do app para o seu
+              SAP. O único dado que trafega externamente é a validação da sua
+              chave de API para verificar a licença.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              O app funciona com SAP on-premise e BTP Cloud?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              Sim. O DLAcademy suporta ambientes on-premise via ADT (basta
+              informar IP, mandante e credenciais) e SAP BTP Cloud ABAP (via
+              Service Key JSON). Você pode cadastrar múltiplos ambientes e
+              alternar entre eles livremente.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Posso usar o chat sem estar conectado a um SAP?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              Sim, mas as perguntas que exigem consulta ao SAP não poderão ser
+              respondidas sem um ambiente ativo. O chat pode responder perguntas
+              gerais sobre ABAP e SAP mesmo sem conexão.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              O Windows mostra aviso de segurança ao instalar. É normal?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              Sim, é normal em aplicativos novos sem certificado EV. Clique em
+              "Mais informações" e depois em "Executar assim mesmo". No macOS,
+              vá em Preferências do Sistema → Privacidade e Segurança → clique
+              em "Abrir assim mesmo".
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              O app se atualiza automaticamente?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              As atualizações são disponibilizadas como novos instaladores. Você
+              será notificado dentro do app quando houver uma nova versão
+              disponível.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+      <div class="container">
+        <div class="footer-inner">
+          <div class="footer-text">
+            © 2025 <span>Descomplicando Linguagens</span> · Todos os direitos
+            reservados
+          </div>
+          <div class="footer-links">
+            <a href="#features">Funcionalidades</a>
+            <a href="#download">Download</a>
+            <a href="#faq">FAQ</a>
+            <a href="mailto:suporte@dlacademy.com.br">Suporte</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ─── SCRIPTS ─── -->
+    <script>
+      // FAQ toggle
+      function toggleFaq(el) {
+        const item = el.parentElement;
+        const wasOpen = item.classList.contains("open");
+        document
+          .querySelectorAll(".faq-item.open")
+          .forEach((i) => i.classList.remove("open"));
+        if (!wasOpen) item.classList.add("open");
+      }
+
+      // Intersection Observer for animations
+      const observerOptions = { threshold: 0.15 };
+
+      // Feature cards reveal
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.style.opacity = "1";
+              entry.target.style.transform = "translateY(0)";
+            }, i * 80);
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".feature-card").forEach((el, i) => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(30px)";
+        el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+        revealObserver.observe(el);
+      });
+
+      // Steps reveal
+      const stepObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            stepObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".step").forEach((el, i) => {
+        el.style.transitionDelay = `${i * 100}ms`;
+        stepObserver.observe(el);
+      });
+
+      // Tools reveal
+      const toolObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            toolObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".tool-item").forEach((el, i) => {
+        el.style.transitionDelay = `${i * 60}ms`;
+        el.style.transition = `opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms`;
+        toolObserver.observe(el);
+      });
+
+      // Nav scroll effect
+      window.addEventListener("scroll", () => {
+        const nav = document.querySelector("nav");
+        if (window.scrollY > 40) {
+          nav.style.borderBottomColor = "rgba(0, 123, 151, 0.2)";
+        } else {
+          nav.style.borderBottomColor = "rgba(0, 123, 151, 0.12)";
+        }
+      });
+
+      // Animated counter for stats
+      function animateCounters() {
+        // Simple pulse effect on stats when visible
+        const statsObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.querySelectorAll(".stat-number").forEach((el) => {
+                  el.style.animation = "none";
+                  el.offsetHeight; // reflow
+                  el.style.animation = "fadeInDown 0.5s ease both";
+                });
+              }
+            });
+          },
+          { threshold: 0.5 },
+        );
+
+        const statsEl = document.querySelector(".hero-stats");
+        if (statsEl) statsObserver.observe(statsEl);
+      }
+
+      animateCounters();
+    </script>
+  </body>
+</html>
