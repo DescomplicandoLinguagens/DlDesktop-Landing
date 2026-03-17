@@ -4,15 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DL SAP — Assistente IA para SAP</title>
-    <link rel="icon" type="image/png" href="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100" />
-    <meta name="description" content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP." />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100"
+    />
+    <meta
+      name="description"
+      content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP."
+    />
 
     <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://descomplicandolinguagens.com.br/" />
+    <meta
+      property="og:url"
+      content="https://descomplicandolinguagens.com.br/"
+    />
     <meta property="og:title" content="DL SAP — Assistente IA para SAP" />
-    <meta property="og:description" content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP." />
-    <meta property="og:image" content="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100" />
+    <meta
+      property="og:description"
+      content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP."
+    />
+    <meta
+      property="og:image"
+      content="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100"
+    />
     <meta property="og:image:width" content="256" />
     <meta property="og:image:height" content="256" />
     <meta property="og:image:alt" content="DL SAP — Assistente IA para SAP" />
@@ -22,8 +38,14 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="DL SAP — Assistente IA para SAP" />
-    <meta name="twitter:description" content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP." />
-    <meta name="twitter:image" content="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100" />
+    <meta
+      name="twitter:description"
+      content="Conecte seus sistemas SAP a uma Inteligência Artificial. Explore objetos ABAP, analise dependências e converse com um agente que entende o seu SAP."
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.descomplicandolinguagens.com.br/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoNewDL.fabc9766.png&w=256&q=100"
+    />
     <meta name="twitter:image:alt" content="DL SAP — Assistente IA para SAP" />
     <style>
       :root {
@@ -919,6 +941,150 @@
         line-height: 1.5;
       }
 
+      /* ─── MULTI-LLM SECTION ─── */
+      .models {
+        padding: 80px 0 100px;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(0, 123, 151, 0.03) 50%,
+          transparent 100%
+        );
+      }
+
+      .models-header {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+
+      .models-header .section-desc {
+        margin: 0 auto;
+      }
+
+      .models-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 16px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .model-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .model-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .model-card:hover {
+        border-color: rgba(0, 123, 151, 0.35);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+      }
+
+      .model-card.recommended {
+        border-color: rgba(0, 123, 151, 0.4);
+        background: var(--bg-card2);
+      }
+
+      .model-card.recommended::before {
+        content: "Recomendado";
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--brand);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 0 16px 0 8px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .model-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+
+      .model-name {
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .model-provider {
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+
+      .model-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+      }
+
+      .model-tag {
+        background: rgba(0, 123, 151, 0.1);
+        color: var(--brand-light);
+        border: 1px solid rgba(0, 123, 151, 0.2);
+        padding: 2px 8px;
+        border-radius: 100px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .model-tag.cost-low {
+        background: rgba(40, 200, 64, 0.1);
+        color: #28c840;
+        border-color: rgba(40, 200, 64, 0.2);
+      }
+
+      .model-tag.cost-mid {
+        background: rgba(251, 188, 46, 0.1);
+        color: #febc2e;
+        border-color: rgba(251, 188, 46, 0.2);
+      }
+
+      .model-tag.cost-high {
+        background: rgba(255, 95, 87, 0.1);
+        color: #ff5f57;
+        border-color: rgba(255, 95, 87, 0.2);
+      }
+
+      .models-note {
+        text-align: center;
+        margin-top: 32px;
+        font-size: 13px;
+        color: var(--text-dim);
+      }
+
+      .models-note span {
+        color: var(--brand-light);
+      }
+
       /* ─── SECURITY SECTION ─── */
       .security {
         padding: 80px 0 100px;
@@ -1314,6 +1480,7 @@
       <ul class="nav-links">
         <li><a href="#features">Funcionalidades</a></li>
         <li><a href="#how">Como funciona</a></li>
+        <li><a href="#modelos">Modelos IA</a></li>
         <li><a href="#seguranca">Segurança</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#download" class="nav-cta">Baixar agora</a></li>
@@ -1324,7 +1491,7 @@
     <section class="hero">
       <div class="hero-badge">
         <div class="hero-badge-dot"></div>
-        Novo · Agente IA para SAP · Windows &amp; macOS
+        Novo · Multi-LLM · Code Editing · Windows &amp; macOS
       </div>
 
       <h1 class="hero-title">
@@ -1333,9 +1500,9 @@
       </h1>
 
       <p class="hero-subtitle">
-        Explore objetos ABAP, analise dependências, consulte requests de
-        transporte e converse com um agente que entende o seu SAP — tudo em
-        linguagem natural.
+        Explore objetos ABAP, refatore código, analise dependências e converse
+        com um agente multi-LLM que entende o seu SAP — tudo em linguagem
+        natural, direto do seu computador.
       </p>
 
       <div class="hero-actions">
@@ -1363,7 +1530,7 @@
           <div class="stat-label">On-Premise &amp; BTP</div>
         </div>
         <div class="stat">
-          <div class="stat-number">+15</div>
+          <div class="stat-number">+20</div>
           <div class="stat-label">Ferramentas IA</div>
         </div>
         <div class="stat">
@@ -1399,11 +1566,7 @@
             </div>
             <div class="nav-item active">
               <div class="nav-item-dot"></div>
-              Dashboard
-            </div>
-            <div class="nav-item">
-              <div class="nav-item-dot"></div>
-              Ambientes SAP
+              Chat com IA
             </div>
             <div class="nav-item">
               <div class="nav-item-dot"></div>
@@ -1411,11 +1574,7 @@
             </div>
             <div class="nav-item">
               <div class="nav-item-dot"></div>
-              Chat com IA
-            </div>
-            <div class="nav-item">
-              <div class="nav-item-dot"></div>
-              Ferramentas
+              Classes &amp; Código
             </div>
             <div class="nav-item">
               <div class="nav-item-dot"></div>
@@ -1423,42 +1582,80 @@
             </div>
             <div class="nav-item">
               <div class="nav-item-dot"></div>
-              Requests
+              Ajuste de Código
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Requests CTS
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-dot"></div>
+              Ferramentas IA
             </div>
           </div>
           <div class="preview-main">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid var(--border);
+              "
+            >
+              <span style="font-size: 11px; color: var(--text-dim)"
+                >Modo:
+                <span style="color: var(--brand-light); font-weight: 600"
+                  >Desenvolvedor</span
+                ></span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  background: rgba(138, 99, 210, 0.15);
+                  color: #a78bfa;
+                  border: 1px solid rgba(138, 99, 210, 0.25);
+                  padding: 2px 8px;
+                  border-radius: 100px;
+                  font-weight: 600;
+                "
+                >Claude Sonnet 4.6</span
+              >
+            </div>
             <div class="chat-messages">
               <div class="msg user">
                 <div class="msg-avatar user">U</div>
                 <div class="msg-bubble">
-                  Mostre o código-fonte da classe ZCL_MINHA_CLASSE
+                  Refatore a classe ZCL_AP_PAGAMENTO para usar exceções CX_*
                 </div>
               </div>
               <div class="msg ai">
                 <div class="msg-avatar ai">AI</div>
                 <div class="msg-bubble">
-                  Encontrei a classe <strong>ZCL_MINHA_CLASSE</strong>. Aqui
-                  está o método principal:
+                  Lendo <strong>ZCL_AP_PAGAMENTO</strong> e analisando
+                  dependências...
                   <div class="code-block">
-                    <span style="color: #ff79c6">CLASS</span> zcl_minha_classe
-                    <span style="color: #ff79c6">IMPLEMENTATION</span>.<br />
-                    &nbsp;&nbsp;<span style="color: #ff79c6">METHOD</span>
-                    <span style="color: #50fa7b">calcular_imposto</span>.<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6272a4"
-                      >" Cálculo ICMS aplicado</span
+                    <span style="color: #6272a4">" Antes: RAISE EXCEPTION</span
                     ><br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;resultado = base * aliq / 100.<br />
-                    &nbsp;&nbsp;<span style="color: #ff79c6">ENDMETHOD</span
-                    >.<br />
-                    <span style="color: #ff79c6">ENDCLASS</span>.
+                    &nbsp;&nbsp;<span style="color: #ff79c6"
+                      >RAISE EXCEPTION TYPE</span
+                    >
+                    <span style="color: #50fa7b">cx_pagamento_invalido</span
+                    ><br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #f1fa8c"
+                      >MESSAGE</span
+                    >
+                    lv_msg.<br />
+                    <span style="color: #6272a4"
+                      >" + lock automático aplicado ✓</span
+                    >
                   </div>
                 </div>
               </div>
               <div class="msg user">
                 <div class="msg-avatar user">U</div>
-                <div class="msg-bubble">
-                  Quais são as dependências dessa classe?
-                </div>
+                <div class="msg-bubble">Aplique e ative a classe</div>
               </div>
             </div>
             <div class="preview-input">
@@ -1478,8 +1675,8 @@
             Tudo que você precisa<br />para trabalhar com SAP
           </h2>
           <p class="section-desc">
-            Desde explorar objetos ABAP até editar código-fonte, o DLAcademy
-            centraliza tudo em uma única interface inteligente.
+            Desde explorar objetos ABAP até editar e refatorar código-fonte, o
+            DL SAP centraliza tudo em uma única interface inteligente.
           </p>
         </div>
 
@@ -1549,6 +1746,32 @@
             </div>
             <div class="feature-tag">MCP nativo</div>
           </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">🛠️</div>
+            <div class="feature-title">Ajuste de Código com IA</div>
+            <div class="feature-desc">
+              Selecione qualquer programa ou classe, peça à IA para revisar e
+              sugerir melhorias. Veja o diff antes e depois, aprove alterações e
+              ative o código direto no SAP — tudo sem sair do app.
+            </div>
+            <div class="feature-tag">Refatoração automática</div>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon">👥</div>
+            <div class="feature-title">Três Modos de Chat Especializados</div>
+            <div class="feature-desc">
+              Escolha o perfil certo para cada conversa:
+              <strong style="color: var(--text)">Desenvolvedores</strong> (ABAP
+              técnico),
+              <strong style="color: var(--text)">Consultores Funcionais</strong>
+              (regras de negócio) ou
+              <strong style="color: var(--text)">Key Users</strong> (linguagem
+              simples). A IA adapta a resposta ao seu nível.
+            </div>
+            <div class="feature-tag">Personalizado por perfil</div>
+          </div>
         </div>
       </div>
     </section>
@@ -1573,8 +1796,8 @@
                 <div>
                   <div class="step-title">Baixe e instale</div>
                   <div class="step-desc">
-                    Instale o DLAcademy no seu Windows ou macOS. Processo
-                    simples, sem dependências externas.
+                    Instale o DL SAP no seu Windows ou macOS. Processo simples,
+                    sem dependências externas.
                   </div>
                 </div>
               </div>
@@ -1673,8 +1896,9 @@
           <div class="section-label">✦ Ferramentas IA</div>
           <h2 class="section-title">O que a IA pode fazer<br />no seu SAP</h2>
           <p class="section-desc">
-            O agente tem acesso a um catálogo completo de ações que executa
-            diretamente no seu sistema SAP, em tempo real.
+            O agente tem acesso a um catálogo com mais de 20 ações que executa
+            diretamente no seu sistema SAP, em tempo real — visíveis no chat
+            enquanto são usadas.
           </p>
         </div>
 
@@ -1756,7 +1980,221 @@
               </div>
             </div>
           </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🧹</div>
+            <div>
+              <div class="tool-name">Ajuste de Código</div>
+              <div class="tool-desc">
+                IA revisa o código ABAP, propõe melhorias e aplica as alterações
+                com lock e ativação automática
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🔷</div>
+            <div>
+              <div class="tool-name">Interfaces ABAP</div>
+              <div class="tool-desc">
+                Navega, lê e explora a definição completa de interfaces ABAP e
+                seus métodos
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🌿</div>
+            <div>
+              <div class="tool-name">CDS Views</div>
+              <div class="tool-desc">
+                Lista, visualiza e analisa CDS Views — incluindo annotations e
+                associações entre entidades
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">📝</div>
+            <div>
+              <div class="tool-name">Especificações Técnicas</div>
+              <div class="tool-desc">
+                Gera documentação técnica completa a partir do código-fonte ABAP
+                com formatação padronizada
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🔁</div>
+            <div>
+              <div class="tool-name">Transações SAP</div>
+              <div class="tool-desc">
+                Consulta detalhes de transações, associa objetos e identifica
+                programas vinculados
+              </div>
+            </div>
+          </div>
+          <div class="tool-item reveal-up">
+            <div class="tool-emoji">🗄️</div>
+            <div>
+              <div class="tool-name">Dicionário de Dados</div>
+              <div class="tool-desc">
+                Inspeciona estruturas, elementos de dados, domínios, tabelas e
+                tipos com todos os seus atributos
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── MULTI-LLM ─── -->
+    <section class="models" id="modelos">
+      <div class="container">
+        <div class="models-header">
+          <div class="section-label">✦ Modelos de IA</div>
+          <h2 class="section-title">
+            Você escolhe qual IA<br />trabalha com seu SAP
+          </h2>
+          <p class="section-desc">
+            Conecte o melhor modelo para cada tarefa. Do raciocínio avançado ao
+            custo-benefício ideal, o DL SAP suporta os principais LLMs do
+            mercado.
+          </p>
+        </div>
+
+        <div class="models-grid">
+          <div class="model-card recommended reveal-model">
+            <div
+              class="model-logo"
+              style="background: rgba(138, 99, 210, 0.15); color: #a78bfa"
+            >
+              ✦
+            </div>
+            <div>
+              <div class="model-name">Claude Sonnet 4.6</div>
+              <div class="model-provider">Anthropic</div>
+            </div>
+            <div class="model-tags">
+              <span class="model-tag">Melhor para ABAP</span>
+              <span class="model-tag">MCP nativo</span>
+              <span class="model-tag cost-mid">Custo médio</span>
+            </div>
+          </div>
+
+          <div class="model-card reveal-model">
+            <div
+              class="model-logo"
+              style="
+                background: rgba(16, 163, 127, 0.15);
+                color: #10a37f;
+                font-size: 20px;
+                font-weight: 800;
+              "
+            >
+              GPT
+            </div>
+            <div>
+              <div class="model-name">GPT-4.1</div>
+              <div class="model-provider">OpenAI</div>
+            </div>
+            <div class="model-tags">
+              <span class="model-tag">Raciocínio</span>
+              <span class="model-tag cost-mid">Custo médio</span>
+            </div>
+          </div>
+
+          <div class="model-card reveal-model">
+            <div
+              class="model-logo"
+              style="
+                background: rgba(66, 133, 244, 0.15);
+                color: #4285f4;
+                font-size: 16px;
+                font-weight: 800;
+              "
+            >
+              G
+            </div>
+            <div>
+              <div class="model-name">Gemini 2.5 Pro</div>
+              <div class="model-provider">Google</div>
+            </div>
+            <div class="model-tags">
+              <span class="model-tag">Contexto longo</span>
+              <span class="model-tag cost-mid">Custo médio</span>
+            </div>
+          </div>
+
+          <div class="model-card reveal-model">
+            <div
+              class="model-logo"
+              style="
+                background: rgba(0, 200, 255, 0.12);
+                color: #00c8ff;
+                font-size: 14px;
+                font-weight: 800;
+              "
+            >
+              xAI
+            </div>
+            <div>
+              <div class="model-name">Grok 4</div>
+              <div class="model-provider">xAI</div>
+            </div>
+            <div class="model-tags">
+              <span class="model-tag">Alta performance</span>
+              <span class="model-tag cost-high">Custo alto</span>
+            </div>
+          </div>
+
+          <div class="model-card reveal-model">
+            <div
+              class="model-logo"
+              style="
+                background: rgba(16, 163, 127, 0.15);
+                color: #10a37f;
+                font-size: 16px;
+                font-weight: 800;
+              "
+            >
+              mini
+            </div>
+            <div>
+              <div class="model-name">GPT-4.1 Mini</div>
+              <div class="model-provider">OpenAI</div>
+            </div>
+            <div class="model-tags">
+              <span class="model-tag">Rápido</span>
+              <span class="model-tag cost-low">Econômico</span>
+            </div>
+          </div>
+
+          <div class="model-card reveal-model">
+            <div
+              class="model-logo"
+              style="
+                background: rgba(66, 133, 244, 0.15);
+                color: #4285f4;
+                font-size: 13px;
+                font-weight: 800;
+              "
+            >
+              Flash
+            </div>
+            <div>
+              <div class="model-name">Gemini 2.5 Flash</div>
+              <div class="model-provider">Google</div>
+            </div>
+            <div class="model-tags">
+              <span class="model-tag">Velocidade</span>
+              <span class="model-tag cost-low">Econômico</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="models-note">
+          Troque o modelo a qualquer momento no chat ·
+          <span>Tokens consumidos exibidos em tempo real</span>
+        </p>
       </div>
     </section>
 
@@ -1770,8 +2208,8 @@
             <div class="section-label">✦ Segurança &amp; Privacidade</div>
             <h2 class="section-title">Seus dados SAP<br />ficam com você</h2>
             <p class="section-desc">
-              O DLAcademy foi projetado com privacidade como prioridade. Seus
-              dados de produção nunca saem da sua máquina.
+              O DL SAP foi projetado com privacidade como prioridade. Seus dados
+              de produção nunca saem da sua máquina.
             </p>
           </div>
 
@@ -1979,10 +2417,10 @@
               </svg>
             </div>
             <div class="faq-answer">
-              Sim. O DLAcademy suporta ambientes on-premise via ADT (basta
-              informar IP, mandante e credenciais) e SAP BTP Cloud ABAP (via
-              Service Key JSON). Você pode cadastrar múltiplos ambientes e
-              alternar entre eles livremente.
+              Sim. O DL SAP suporta ambientes on-premise via ADT (basta informar
+              IP, mandante e credenciais) e SAP BTP Cloud ABAP (via Service Key
+              JSON). Você pode cadastrar múltiplos ambientes e alternar entre
+              eles livremente.
             </div>
           </div>
 
@@ -2031,6 +2469,29 @@
 
           <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">
+              Quais modelos de IA posso usar e preciso pagar à parte?
+              <svg
+                class="faq-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <div class="faq-answer">
+              O DL SAP suporta Claude Sonnet 4.6 (Anthropic), GPT-4.1 e GPT-4.1
+              Mini (OpenAI), Gemini 2.5 Pro e Flash (Google) e Grok 4 (xAI). O
+              consumo de tokens é cobrado pela sua chave de API do respectivo
+              provedor, que você configura nas preferências do app. O custo
+              estimado por conversa é exibido em tempo real dentro do chat.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
               O app se atualiza automaticamente?
               <svg
                 class="faq-icon"
@@ -2058,11 +2519,12 @@
       <div class="container">
         <div class="footer-inner">
           <div class="footer-text">
-            © 2025 <span>Descomplicando Linguagens</span> · Todos os direitos
+            © 2026 <span>Descomplicando Linguagens</span> · Todos os direitos
             reservados
           </div>
           <div class="footer-links">
             <a href="#features">Funcionalidades</a>
+            <a href="#modelos">Modelos IA</a>
             <a href="#download">Download</a>
             <a href="#faq">FAQ</a>
             <a href="mailto:suporte@dlacademy.com.br">Suporte</a>
@@ -2135,6 +2597,22 @@
         el.style.transitionDelay = `${i * 60}ms`;
         el.style.transition = `opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms`;
         toolObserver.observe(el);
+      });
+
+      // Model cards reveal
+      const modelObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            modelObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".model-card").forEach((el, i) => {
+        el.style.transitionDelay = `${i * 70}ms`;
+        el.style.transition = `opacity 0.4s ease ${i * 70}ms, transform 0.4s ease ${i * 70}ms`;
+        modelObserver.observe(el);
       });
 
       // Nav scroll effect
